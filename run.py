@@ -14,9 +14,9 @@ if __name__ == "__main__":
         exit(1)
     try:
         with open(argv[2], 'r') as file:
-            instructionList = generate_instructions(file)
-            useForwarding = True if argv[1] == 'F' else False
-            simulate(instructionList, useForwarding)
+            instruction_list = generate_instructions(file)
+            use_forwarding = True if argv[1] == 'F' else False
+            simulate(instruction_list, use_forwarding)
     except IOError as e:
         usage()
         exit(1)

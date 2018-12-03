@@ -31,7 +31,7 @@ class Instruction(object):
             type    int
         """
         print(self.full)
-        if current_cycle < self.cycleRange[0]:
+        if current_cycle < self.cycle_range[0]:
             print(".\t.\t.\t.\t.\t.\t.\t.\t.")
             return
 
@@ -70,6 +70,7 @@ def generate_instructions(file):
         type    file
         return  list of Instruction class objects
     """
+    print("Got to generate")
     instructions = []
     current_cycle = 1
 
@@ -104,9 +105,10 @@ def generate_instructions(file):
         if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
                 and instruction.nops_required == 1:
             instruction.cycle_range[1] += 1
-            instruction.isDoubleDep = True
+            instruction.is_double_dep = True
 
         instructions.append(instruction)
+        current_cycle += 1
 
     instructions.append(Instruction("nop\t", "nop", [], -1, -1, 0, 0, False))
     return instructions
