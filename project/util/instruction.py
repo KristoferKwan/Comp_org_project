@@ -32,7 +32,7 @@ class Instruction(object):
         """
         print(self.full)
         if current_cycle < self.cycle_range[0]:
-            print(".\t.\t.\t.\t.\t.\t.\t.\t.")
+            print("\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n")
             return
 
         stages = ["IF", "ID", "EX", "MEM", "WB", "*"]

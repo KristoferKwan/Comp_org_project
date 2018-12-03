@@ -12,9 +12,7 @@ def simulate(instruction_list, use_forwarding):
         type    list
         type    boolean
     """
-    print(instruction_list)
     num_cycles = instruction_list[- 2].cycle_range[1]
-    print(num_cycles)
 
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)"))
     line = "----------------------------------------------------------------------------------"
