@@ -25,8 +25,8 @@ class Instruction(object):
     def debug_print(self):
         """ Print instruction based on its class attributes in debug format.
 
-            :param self:    current instruction object
-            :type self:     Instruction
+            :param  self:   current instruction object
+            :type   self:   Instruction
         """
         print(self.full)
         print("Operation: " + str(self.operation))
@@ -91,8 +91,8 @@ def generate_instructions(file):
 
         :param      file:   text or assembly file input by the user as a command-line argument
         :type       file:   file
-        :return:    list of Instruction class objects
-        :rtype      list
+        :return:            list of Instruction class objects
+        :rtype              list
     """
     instructions = []
     current_cycle = 1

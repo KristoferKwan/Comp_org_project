@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b0b9c23-cb90-4c43-9f7e-3f64a2b65e3a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/util/instruction.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/util/instruction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/util/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/util/simulation.py" afterDir="false" />
     </list>
     <ignored mask="pycache" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/util/instruction.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="100" selection-start-line="100" selection-end-line="100" />
+            <state relative-caret-position="374">
+              <caret line="28" column="28" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -406,8 +404,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project/util/instruction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="100" selection-start-line="100" selection-end-line="100" />
+        <state relative-caret-position="374">
+          <caret line="28" column="28" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
         </state>
       </provider>
     </entry>
