@@ -1,6 +1,6 @@
-# Comp_org_project
+# CS2500 Final Project
 
-CS2500 final project. Basic implementation of MIPS pipelined instruction flow with forwarding.
+Basic implementation of MIPS pipelined instruction flow with forwarding.
 
 ## Participants
 
