@@ -12,11 +12,11 @@ class Instruction(object):
 
         Contains a function for printing its data.
     """
-    def __init__(self, full_instruction="", operation="", registers=[], start_cycle=0, end_cycle=0,
+    def __init__(self, full_instruction="", operation="", registers=None, start_cycle=0, end_cycle=0,
                  nops_required=0, stall_until=0, is_dbl_dependent=False):
         self.full = full_instruction
         self.operation = operation
-        self.registers = registers
+        self.registers = [] if registers is None else registers
         self.cycle_range = [start_cycle, end_cycle]
         self.nops_required = nops_required
         self.stall_until = stall_until
@@ -98,9 +98,9 @@ def generate_instructions(file):
     current_cycle = 1
 
     for line in file:
-        # fixme: cycle_range and stall until values don't change
-        instruction = Instruction(line.replace("\n", ""), line[0:line.find(" ")],
-                                  [current_cycle, current_cycle + 4], 0, 0, False)
+        # fixme: stall_until values may not change (untested)
+        instruction = Instruction(line.replace("\n", ""), line[0:line.find(" ")], [],
+                                  current_cycle, current_cycle + 4, 0, 0, False)
         reg1 = line.find("$")
         temp = line[reg1 + 1:]
         reg2 = temp.find("$")
