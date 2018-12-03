@@ -1,3 +1,3 @@
-from .instruction import Instruction, generate_instructions
+from .instruction import Instruction, generate_instructions, debug_print_instruction_list
 from .simulation import simulate
 from .helper import usage

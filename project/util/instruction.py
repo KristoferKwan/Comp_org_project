@@ -22,13 +22,26 @@ class Instruction(object):
         self.stall_until = stall_until
         self.is_double_dep = is_dbl_dependent
 
-    def print_itself(self, current_cycle):
-        """ Print instruction based on its class attributes.
+    def debug_print(self):
+        """ Print instruction based on its class attributes in debug format.
 
-            param   Instruction class instance
-            param   current cycle of the simulation
-            type    Instruction
-            type    int
+            :param self:    current instruction object
+            :type self:     Instruction
+        """
+        print(self.full)
+        print("Operation: " + str(self.operation))
+        print("Registers: " + str(self.registers))
+        print("Cycle Range: " + str(self.cycle_range))
+        print("Nops Required: " + str(self.nops_required))
+        print("Stall until cycle: " + str(self.stall_until))
+        print("Double Dependent? " + str(self.is_double_dep) + "\n")
+
+    def sim_print(self, current_cycle):
+        """ Print instruction based on its class attributes in simulation format.
+
+            :param  self:               current instruction object
+            :type   self:               Instruction
+            :param  int current_cycle:  current simulation cycle
         """
         print(self.full)
         if current_cycle < self.cycle_range[0]:
@@ -63,36 +76,48 @@ class Instruction(object):
         print('')
 
 
+def debug_print_instruction_list(instruction_list):
+    """ Print list of instructions based on Instruction class attributes in debug format.
+
+    :param  instruction_list:   list of Instruction class objects
+    :type   instruction_list:   list
+    """
+    for instruction in instruction_list:
+        instruction.debug_print()
+
+
 def generate_instructions(file):
     """ Generate Instruction class instances based on the input file and return them.
 
-        param   text or assembly file input by the user as a command-line argument
-        type    file
-        return  list of Instruction class objects
+        :param      file:   text or assembly file input by the user as a command-line argument
+        :type       file:   file
+        :return:    list of Instruction class objects
+        :rtype      list
     """
-    print("Got to generate")
     instructions = []
     current_cycle = 1
 
     for line in file:
-        instruction = Instruction(line, line[0:line.find(" ")], [current_cycle, current_cycle + 4], 0, 0, False)
-
+        # fixme: cycle_range and stall until values don't change
+        instruction = Instruction(line.replace("\n", ""), line[0:line.find(" ")],
+                                  [current_cycle, current_cycle + 4], 0, 0, False)
         reg1 = line.find("$")
         temp = line[reg1 + 1:]
         reg2 = temp.find("$")
 
+        # fixme: incorrect registers being appended
         if instruction.operation == "sw":
-            instruction.registers.append(reg2)
-            instruction.registers.append(reg1)
+            instruction.registers.append(line[reg2 + 1:reg2 + 3])
+            instruction.registers.append(line[reg1 + 1:reg1 + 3])
         else:
-            instruction.registers.append(reg1)
-            instruction.registers.append(reg2)
+            instruction.registers.append(line[reg1 + 1:reg1 + 3])
+            instruction.registers.append(line[reg2 + 1:reg2 + 3])
 
             temp = line[reg2 + 1:]
             reg3 = temp.find("$")
 
             if reg3 != -1:
-                instruction.registers.append(reg3)
+                instruction.registers.append(line[reg3 + 1: reg3 + 3])
 
         for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \

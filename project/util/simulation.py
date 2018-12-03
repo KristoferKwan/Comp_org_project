@@ -7,11 +7,12 @@ def simulate(instruction_list, use_forwarding):
     """ Main simulation loop that outsources instruction printing to the instruction.py
         module.
 
-        param   stores Instruction class instances based on the input file.
-        param   specifies whether forwarding should be used in the simulation
-        type    list
-        type    boolean
+        :param  instruction_list:   stores Instruction class instances based on the input file.
+        :type   instruction_list:   list
+        :param  use_forwarding:     specifies whether forwarding should be used in the simulation
+        :type   use_forwarding:     boolean
     """
+
     num_cycles = instruction_list[- 2].cycle_range[1]
 
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)"))
@@ -24,9 +25,9 @@ def simulate(instruction_list, use_forwarding):
                 for k in range(0, instruction_list[j].nops_required):
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[1] + 4
-                    instruction_list[-1].print_itself(i)
+                    instruction_list[-1].sim_print(i)
             else:
-                instruction_list[j].print_itself(i)
+                instruction_list[j].sim_print(i)
         print(line)
 
     print("END OF SIMULATION")
