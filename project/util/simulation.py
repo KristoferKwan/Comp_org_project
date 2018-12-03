@@ -24,9 +24,9 @@ def simulate(instruction_list, use_forwarding):
                 for k in range(0, instruction_list[j].nops_required):
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[1] + 4
-                    instruction_list[-1].print(i)
+                    instruction_list[-1].print_itself(i)
             else:
-                instruction_list[j].print(i)
+                instruction_list[j].print_itself(i)
         print(line)
 
     print("END OF SIMULATION")

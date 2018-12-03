@@ -22,7 +22,7 @@ class Instruction(object):
         self.stall_until = stall_until
         self.is_double_dep = is_dbl_dependent
 
-    def print(self, current_cycle):
+    def print_itself(self, current_cycle):
         """ Print instruction based on its class attributes.
 
             param   Instruction class instance
@@ -43,11 +43,11 @@ class Instruction(object):
                 if self.operation == "nop":
                     determinate = i - self.cycle_range[0]
                     if determinate >= 2:
-                        print(stages[5], end="")
+                        print(stages[5], end='')
                     else:
                         print(stages[determinate])
                     if i != 16:
-                        print("\t", end="")
+                        print('\t', end='')
                 else:
                     print(stages[stage])
                     if (stage == 0 and self.nops_required == 2) or \
@@ -55,12 +55,12 @@ class Instruction(object):
                             i >= self.stall_until:
                         stage += 1
                     if i != 16:
-                        print("\t", end="")
+                        print('\t', end='')
             elif i != 16:
-                print(".\t", end="")
+                print('.\t', end='')
             else:
-                print(".", end="")
-        print("")
+                print('.', end='')
+        print('')
 
 
 def generate_instructions(file):
@@ -93,7 +93,7 @@ def generate_instructions(file):
             if reg3 != -1:
                 instruction.registers.append(reg3)
 
-        for i in range(min(len(instructions) - 2, 0), len(instructions)):
+        for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                     or instructions[i].registers[0] in instruction.registers[1:]:
                 distance = current_cycle - instructions[i].cycle_range[0]
@@ -101,7 +101,8 @@ def generate_instructions(file):
                 instruction.stall_until = instructions[i].cycle_range[1]
                 instruction.cycle_range[1] = instruction.stall_until + 3
 
-        if instructions[len(instructions) - 1].nops_required == 2 and instruction.nops_required == 1:
+        if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
+                and instruction.nops_required == 1:
             instruction.cycle_range[1] += 1
             instruction.isDoubleDep = True
 
