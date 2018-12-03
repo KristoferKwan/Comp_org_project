@@ -10,18 +10,15 @@ class Instruction(object):
         the cycle that the instruction should stall until, and whether it is doubly
         dependent with the previous instruction on a particular register.
     """
-    def __init__(self, full_instruction, operation, dest_reg, src_reg1, src_reg2, start_cycle,
-                 end_cycle, nops_required, stall_until, is_double_dependent):
+    def __init__(self, full_instruction="", operation="", registers=[], start_cycle=0, end_cycle=0,
+                 nops_required=0, stall_until=0, is_dbl_dependent=False):
         self.full = full_instruction
-        self.op = operation
-        self.dest = dest_reg
-        self.src1 = src_reg1
-        self.src2 = src_reg2
-        self.startCycle = start_cycle
-        self.endCycle = end_cycle
+        self.operation = operation
+        self.registers = registers
+        self.cycleRange = [start_cycle, end_cycle]
         self.nopsRequired = nops_required
         self.stallUntil = stall_until
-        self.isDoubleDep = is_double_dependent
+        self.isDoubleDep = is_dbl_dependent
 
 
 def generate_instructions(file):
@@ -31,13 +28,62 @@ def generate_instructions(file):
         type    file
         return  list of Instruction class objects
     """
-    pass
+    instructions = []
+    currentCycle = 1
+
+    for line in file:
+        instruction = Instruction(line, [], currentCycle, currentCycle + 4, 0, 0, False)
+        instruction.operation = line[0:line.find(" ")]
+
+        reg1 = line.find("$")
+        temp = line[reg1 + 1:]
+        reg2 = temp.find("$")
+
+        if instruction.operation == "sw":
+            instruction.registers.append(reg2)
+            instruction.registers.append(reg1)
+        else:
+            instruction.registers.append(reg1)
+            instruction.registers.append(reg2)
+
+            temp = line[reg2 + 1:]
+            reg3 = temp.find("$")
+
+            if reg3 != -1:
+                instruction.registers.append(reg3)
+
+        for i in range(min(len(instructions) - 2, 0), len(instructions)):
+            if (instruction.operation == "sw" and instructions[i].registers[0]
+                    == instruction.registers[0]) or instructions[i].registers[0] \
+                    in instruction.registers[1:]:
+                distance = currentCycle - instructions[i].startCycle
+                instruction.nopsRequired = distance
+                instruction.stallUntil = instruction[i].endCycle
+                instruction.cycleRange[1] = instruction.stallUntil + 3
+
+        if instructions[len(instructions) - 1].nopsRequired == 2 and \
+                instruction.nopsRequired == 1:
+            instruction.cycleRange[1] += 1
+            instruction.isDoubleDep = True
+
+        instructions.append(instruction)
+
+    instructions.append(Instruction("nop\t", "nop", [], -1, -1, 0, 0, False))
+    return instructions
 
 
-def print_instruction(instruction):
+def print_instruction(instruction, current_cycle):
     """ Print instruction based on its class attributes.
 
         param   Instruction class instance
         type    Instruction
     """
-    pass
+    print(instruction.full)
+    if current_cycle < instruction.cycleRange[0]:
+        print(".\t.\t.\t.\t.\t.\t.\t.\t.")
+        return
+
+    stage = 0
+
+    for i in range(1, 9):
+        pass
