@@ -17,10 +17,10 @@ class Instruction(object):
         self.full = full_instruction
         self.operation = operation
         self.registers = registers
-        self.cycleRange = [start_cycle, end_cycle]
-        self.nopsRequired = nops_required
-        self.stallUntil = stall_until
-        self.isDoubleDep = is_dbl_dependent
+        self.cycle_range = [start_cycle, end_cycle]
+        self.nops_required = nops_required
+        self.stall_until = stall_until
+        self.is_double_dep = is_dbl_dependent
 
     def print(self, current_cycle):
         """ Print instruction based on its class attributes.
@@ -35,10 +35,32 @@ class Instruction(object):
             print(".\t.\t.\t.\t.\t.\t.\t.\t.")
             return
 
-        # stage = 0
+        stages = ["IF", "ID", "EX", "MEM", "WB", "*"]
+        stage = 0
 
         for i in range(1, 17):
-            pass
+            if current_cycle >= i < self.cycle_range[0] and i <= self.cycle_range[1]:
+                if self.operation == "nop":
+                    determinate = i - self.cycle_range[0]
+                    if determinate >= 2:
+                        print(stages[5], end="")
+                    else:
+                        print(stages[determinate])
+                    if i != 16:
+                        print("\t", end="")
+                else:
+                    print(stages[stage])
+                    if (stage == 0 and self.nops_required == 2) or \
+                            (stage == 0 and self.nops_required == 1 and self.is_double_dep) or \
+                            i >= self.stall_until:
+                        stage += 1
+                    if i != 16:
+                        print("\t", end="")
+            elif i != 16:
+                print(".\t", end="")
+            else:
+                print(".", end="")
+        print("")
 
 
 def generate_instructions(file):
@@ -49,11 +71,10 @@ def generate_instructions(file):
         return  list of Instruction class objects
     """
     instructions = []
-    currentCycle = 1
+    current_cycle = 1
 
     for line in file:
-        instruction = Instruction(line, [], currentCycle, currentCycle + 4, 0, 0, False)
-        instruction.operation = line[0:line.find(" ")]
+        instruction = Instruction(line, line[0:line.find(" ")], [current_cycle, current_cycle + 4], 0, 0, False)
 
         reg1 = line.find("$")
         temp = line[reg1 + 1:]
@@ -73,17 +94,15 @@ def generate_instructions(file):
                 instruction.registers.append(reg3)
 
         for i in range(min(len(instructions) - 2, 0), len(instructions)):
-            if (instruction.operation == "sw" and instructions[i].registers[0]
-                    == instruction.registers[0]) or instructions[i].registers[0] \
-                    in instruction.registers[1:]:
-                distance = currentCycle - instructions[i].startCycle
-                instruction.nopsRequired = distance
-                instruction.stallUntil = instruction[i].endCycle
-                instruction.cycleRange[1] = instruction.stallUntil + 3
+            if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
+                    or instructions[i].registers[0] in instruction.registers[1:]:
+                distance = current_cycle - instructions[i].cycle_range[0]
+                instruction.nops_required = distance
+                instruction.stall_until = instructions[i].cycle_range[1]
+                instruction.cycle_range[1] = instruction.stall_until + 3
 
-        if instructions[len(instructions) - 1].nopsRequired == 2 and \
-                instruction.nopsRequired == 1:
-            instruction.cycleRange[1] += 1
+        if instructions[len(instructions) - 1].nops_required == 2 and instruction.nops_required == 1:
+            instruction.cycle_range[1] += 1
             instruction.isDoubleDep = True
 
         instructions.append(instruction)

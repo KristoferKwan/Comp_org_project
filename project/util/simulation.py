@@ -2,8 +2,6 @@
     Date: December 2018
 """
 
-from project.util import Instruction
-
 
 def simulate(instruction_list, use_forwarding):
     """ Main simulation loop that outsources instruction printing to the instruction.py
@@ -14,6 +12,21 @@ def simulate(instruction_list, use_forwarding):
         type    list
         type    boolean
     """
+    num_cycles = instruction_list[len(instruction_list) - 1].cycle_range[1]
+
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)"))
-    print("----------------------------------------------------------------------------------")
+    line = "----------------------------------------------------------------------------------"
+
+    for i in range(1, num_cycles):
+        print("CPU Cycles ===>\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\n")
+        for j in range(0, len(instruction_list)):
+            if j > 0 and not instruction_list[j].is_doubledep and i >= instruction_list[j].cycle_range[0] + 2:
+                for k in range(0, instruction_list[j].nops_required):
+                    instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
+                    instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[1] + 4
+                    instruction_list[-1].print(i)
+            else:
+                instruction_list[j].print(i)
+        print(line)
+
     print("END OF SIMULATION")
