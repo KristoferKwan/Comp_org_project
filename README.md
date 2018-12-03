@@ -4,7 +4,7 @@ CS2500 final project. Basic implementation of MIPS pipelined instruction flow wi
 
 ## Participants
 
-**Covenant Faluyi** 
-**Peter Gravelin**
-**Kris Kwan** 
-**Griffin Smith** 
+**Covenant Faluyi** <br />
+**Peter Gravelin** <br />
+**Kris Kwan** <br />
+**Griffin Smith** <br />
