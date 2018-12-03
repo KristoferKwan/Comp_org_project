@@ -9,6 +9,8 @@ class Instruction(object):
         the start and end cycles, the number of nops that must be printed before it,
         the cycle that the instruction should stall until, and whether it is doubly
         dependent with the previous instruction on a particular register.
+
+        Contains a function for printing its data.
     """
     def __init__(self, full_instruction="", operation="", registers=[], start_cycle=0, end_cycle=0,
                  nops_required=0, stall_until=0, is_dbl_dependent=False):
@@ -19,6 +21,24 @@ class Instruction(object):
         self.nopsRequired = nops_required
         self.stallUntil = stall_until
         self.isDoubleDep = is_dbl_dependent
+
+    def print(self, current_cycle):
+        """ Print instruction based on its class attributes.
+
+            param   Instruction class instance
+            param   current cycle of the simulation
+            type    Instruction
+            type    int
+        """
+        print(self.full)
+        if current_cycle < self.cycleRange[0]:
+            print(".\t.\t.\t.\t.\t.\t.\t.\t.")
+            return
+
+        # stage = 0
+
+        for i in range(1, 17):
+            pass
 
 
 def generate_instructions(file):
@@ -70,20 +90,3 @@ def generate_instructions(file):
 
     instructions.append(Instruction("nop\t", "nop", [], -1, -1, 0, 0, False))
     return instructions
-
-
-def print_instruction(instruction, current_cycle):
-    """ Print instruction based on its class attributes.
-
-        param   Instruction class instance
-        type    Instruction
-    """
-    print(instruction.full)
-    if current_cycle < instruction.cycleRange[0]:
-        print(".\t.\t.\t.\t.\t.\t.\t.\t.")
-        return
-
-    stage = 0
-
-    for i in range(1, 9):
-        pass
