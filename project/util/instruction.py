@@ -5,10 +5,10 @@
 
 class Instruction(object):
     """ Instruction class definition that holds information for the instruction's
-    full text, operation, destination register, both source source registers,
-    the start and end cycles, the number of nops that must be printed before it,
-    the cycle that the instruction should stall until, and whether it is doubly
-    dependent with the previous instruction on a particular register.
+        full text, operation, destination register, both source source registers,
+        the start and end cycles, the number of nops that must be printed before it,
+        the cycle that the instruction should stall until, and whether it is doubly
+        dependent with the previous instruction on a particular register.
     """
     def __init__(self, full_instruction, operation, dest_reg, src_reg1, src_reg2, start_cycle,
                  end_cycle, nops_required, stall_until, is_double_dependent):
@@ -27,9 +27,9 @@ class Instruction(object):
 def generate_instructions(file):
     """ Generate Instruction class instances based on the input file and return them.
 
-    param   text or assembly file input by the user as a command-line argument
-    type    file
-    return  list of Instruction class objects
+        param   text or assembly file input by the user as a command-line argument
+        type    file
+        return  list of Instruction class objects
     """
     pass
 
@@ -37,7 +37,7 @@ def generate_instructions(file):
 def print_instruction(instruction):
     """ Print instruction based on its class attributes.
 
-    param   Instruction class instance
-    type    Instruction
+        param   Instruction class instance
+        type    Instruction
     """
     pass
