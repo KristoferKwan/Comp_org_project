@@ -52,7 +52,8 @@ class Instruction(object):
         stage = 0
 
         for i in range(1, 17):
-            if current_cycle >= i < self.cycle_range[0] and i <= self.cycle_range[1]:
+            if current_cycle >= i < self.cycle_range[0] and i <= self.cycle_range[1]: 
+            #basically tells it to not print until your simulation is at the right line number
                 if self.operation == "nop":
                     determinate = i - self.cycle_range[0]
                     if determinate >= 2:
@@ -124,7 +125,7 @@ def generate_instructions(file):
                     or instructions[i].registers[0] in instruction.registers[1:]:
                 distance = current_cycle - instructions[i].cycle_range[0]
                 instruction.nops_required = distance
-                instruction.stall_until = instructions[i].cycle_range[1]
+                instruction.stall_until = instructions[i].cycle_range[1]    
                 instruction.cycle_range[1] = instruction.stall_until + 3
 
         if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \

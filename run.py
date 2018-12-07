@@ -18,7 +18,7 @@ if __name__ == "__main__":
             use_forwarding = True if argv[1] == 'F' else False
             debug_print_instruction_list(instruction_list)
             # uncomment to run simulation
-            # simulate(instruction_list, use_forwarding)
+            simulate(instruction_list, use_forwarding)
     except IOError as e:
         usage()
         exit(1)
