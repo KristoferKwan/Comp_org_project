@@ -43,9 +43,9 @@ class Instruction(object):
             :type   self:               Instruction
             :param  int current_cycle:  current simulation cycle
         """
-        print(self.full)
+        print(self.full, end = '\t')
         if current_cycle < self.cycle_range[0]:
-            print("\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n")
+            print(".\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n")
             return
 
         stages = ["IF", "ID", "EX", "MEM", "WB", "*"]
@@ -58,11 +58,11 @@ class Instruction(object):
                     if determinate >= 2:
                         print(stages[5], end='')
                     else:
-                        print(stages[determinate])
+                        print(stages[determinate], end = '')
                     if i != 16:
                         print('\t', end='')
                 else:
-                    print(stages[stage])
+                    print(stages[stage], end = '')
                     if (stage == 0 and self.nops_required == 2) or \
                             (stage == 0 and self.nops_required == 1 and self.is_double_dep) or \
                             i >= self.stall_until:
@@ -102,22 +102,41 @@ def generate_instructions(file):
         instruction = Instruction(line.replace("\n", ""), line[0:line.find(" ")], [],
                                   current_cycle, current_cycle + 4, 0, 0, False)
         reg1 = line.find("$")
-        temp = line[reg1 + 1:]
+        reg1_end = line.find(",")
+        temp = line[reg1_end + 1:]
         reg2 = temp.find("$")
+        reg2_end = temp.find(",")
 
         # fixme: incorrect registers being appended
+        """
+        fixes:
+        1.Ensured that reg1 and reg2 were not -1 before appending.
+        2..find() is called on temp string therefore slicing must be done on temp string
+        and not the line string
+        3.Created new variable reg_end as an ending constraint of registers in the strings.
+        Necessary due to registers having inconsistent string length. e.g. $t1,$zero
+        """
         if instruction.operation == "sw":
-            instruction.registers.append(line[reg2 + 1:reg2 + 3])
-            instruction.registers.append(line[reg1 + 1:reg1 + 3])
+            if reg2 != -1:
+                #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
+                instruction.registers.append(temp[reg2 + 1:reg2_end])
+            if reg1 != -1:
+                instruction.registers.append(line[reg1 + 1:reg1_end])
         else:
-            instruction.registers.append(line[reg1 + 1:reg1 + 3])
-            instruction.registers.append(line[reg2 + 1:reg2 + 3])
+            if reg1 != -1:
+                instruction.registers.append(line[reg1 + 1:reg1_end])
+            if reg2 != -1:
+                #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
+                instruction.registers.append(temp[reg2 + 1:reg2_end])
 
-            temp = line[reg2 + 1:]
+            temp = temp[reg2_end + 1:]
             reg3 = temp.find("$")
-
-            if reg3 != -1:
-                instruction.registers.append(line[reg3 + 1: reg3 + 3])
+            
+            #each line has at least two commas. This if statements starts by checking if there is a third.
+            if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
+                
+                #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
+                instruction.registers.append(temp[reg3 + 1: reg3 + 3])
 
         for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
