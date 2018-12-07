@@ -24,7 +24,7 @@ def simulate(instruction_list, use_forwarding):
             if j > 0 and not instruction_list[j].is_double_dep and i >= instruction_list[j].cycle_range[0] + 2:
                 for k in range(0, instruction_list[j].nops_required):#stall
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
-                    instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[1] + 4
+                    instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[0] + 4
                     instruction_list[-1].sim_print(i)
             instruction_list[j].sim_print(i)
         print(line)
