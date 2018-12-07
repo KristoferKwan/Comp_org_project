@@ -15,19 +15,18 @@ def simulate(instruction_list, use_forwarding):
 
     num_cycles = instruction_list[- 2].cycle_range[1]
 
-    print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)"))
     line = "----------------------------------------------------------------------------------"
+    print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)") + "\n" + line)
 
-    for i in range(1, num_cycles):
-        print("CPU Cycles ===>\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\n")
+    for i in range(1, num_cycles + 1):
+        print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\n")
         for j in range(0, len(instruction_list) - 1):
             if j > 0 and not instruction_list[j].is_double_dep and i >= instruction_list[j].cycle_range[0] + 2:
                 for k in range(0, instruction_list[j].nops_required):#stall
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[1] + 4
                     instruction_list[-1].sim_print(i)
-            else:
-                instruction_list[j].sim_print(i)
+            instruction_list[j].sim_print(i)
         print(line)
 
     print("END OF SIMULATION")

@@ -19,6 +19,8 @@ if __name__ == "__main__":
             debug_print_instruction_list(instruction_list)
             # uncomment to run simulation
             simulate(instruction_list, use_forwarding)
+            #simulate(instruction_list, use_forwarding)
+
     except IOError as e:
         usage()
         exit(1)
