@@ -61,13 +61,13 @@ class Instruction(object):
                     if determinate >= 2:
                         print(stages[5], end='')
                     else:
-                        print(stages[determinate], end = '')
+                        print(stages[determinate], end='')
                     if i != 16:
                         print('\t', end='')
                 else:
                     print(stages[stage], end='')
                     if (stage == 0 and self.nops_required == 2) or \
-                            (stage == 0 and self.nops_required == 1 and self.is_double_dep) or \
+                            (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
                             i >= self.stall_until:
                         stage += 1
                     if i != 16:
@@ -145,7 +145,7 @@ def generate_instructions(file):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                     or instructions[i].registers[0] in instruction.registers[1:]:
                 distance = current_cycle - instructions[i].cycle_range[0]
-                instruction.nops_required = distance
+                instruction.nops_required = 2 if distance == 1 else 1
                 instruction.stall_until = instructions[i].cycle_range[1]    
                 instruction.cycle_range[1] = instruction.stall_until + 3
 
