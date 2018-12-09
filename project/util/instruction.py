@@ -36,7 +36,7 @@ class Instruction(object):
         print("Stall until cycle: " + str(self.stall_until))
         print("Double Dependent? " + str(self.is_double_dep) + "\n")
 
-    def sim_print(self, current_cycle):
+    def sim_print(self, current_cycle, memory):
         """ Print instruction based on its class attributes in simulation format.
 
             :param  self:               current instruction object
@@ -76,6 +76,8 @@ class Instruction(object):
                 print('.\t', end='')
             else:
                 print('.', end='')
+            if stage == 4:
+                memory.evaluate_line(self)
         print('')
 
 

@@ -45,24 +45,28 @@ class Memory(object):
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] | \
 				self.memory_list['$' + curr_line.registers[2]]
 			elif curr_line.operation == "slt":
-				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] | \
-				self.memory_list['$' + curr_line.registers[2]]
+				if self.memory_list['$' + curr_line.registers[1]] < self.memory_list['$' + curr_line.registers[2]]:
+					self.memory_list['$' + curr_line.registers[0]] = 1
+				else:
+					self.memory_list['$' + curr_line.registers[0]] = 0
 		else:
 			if curr_line.operation == "addi":
-				self.memory_list['$'+curr_line.registers[0]] = self.memory_list['$'+curr_line.registers[1]] + \
-				self.memory_list['$'+curr_line.registers[2]]
+				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] + \
+				int(curr_line.full[12:])
 			elif curr_line.operation == "subi":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] - \
-				self.memory_list['$' + curr_line.registers[2]]
+				int(curr_line.full[12:])
 			elif curr_line.operation == "andi":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] & \
-				self.memory_list['$' + curr_line.registers[2]]
+				int(curr_line.full[12:])
 			elif curr_line.operation == "ori":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] | \
-				self.memory_list['$' + curr_line.registers[2]]
+				int(curr_line.full[11:])
 			elif curr_line.operation == "slti":
-				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] | \
-				self.memory_list['$' + curr_line.registers[2]]
+				if self.memory_list['$' + curr_line.registers[1]] < int(curr_line.full[12:]):
+					self.memory_list['$' + curr_line.registers[0]] = 1
+				else:
+					self.memory_list['$' + curr_line.registers[0]] = 0
 
 		return
 
