@@ -43,8 +43,10 @@ class Instruction(object):
             :type   self:               Instruction
             :param  int current_cycle:  current simulation cycle
         """
-
-        print(self.full + "\t\t", end='')
+        if(len(self.full.strip()) > 15):
+            print(self.full.strip() + "\t", end='')
+        else:
+            print(self.full.strip() + "\t\t", end='')
         if current_cycle < self.cycle_range[0]:
             print(".\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n", end='')
             return
@@ -91,7 +93,12 @@ def debug_print_instruction_list(instruction_list):
         instruction.debug_print()
 
 
-def generate_instructions(file):
+def forwarding(instruction, instruction_list):
+    print(instruction_list)
+    return 
+
+
+def generate_instructions(file, fwd):
     """ Generate Instruction class instances based on the input file and return them.
 
         :param      file:   text or assembly file input by the user as a command-line argument
@@ -139,15 +146,18 @@ def generate_instructions(file):
             
             #each line has at least two commas. This if statements starts by checking if there is a third.
             if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
-                
                 #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
                 instruction.registers.append(temp[reg3 + 1: reg3 + 3])
+            elif temp[0].isdigit(): #to parse for the digit
+                instruction.registers.append(int(temp[reg3 + 1:].strip()))
 
         for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                     or instructions[i].registers[0] in instruction.registers[1:]:
                 distance = current_cycle - instructions[i].cycle_range[0]
                 instruction.nops_required = 2 if distance == 1 else 1
+                if fwd == 'F':
+                    forwarding(instruction, instructions)
                 instruction.stall_until = instructions[i].cycle_range[1]    
                 instruction.cycle_range[1] = instruction.stall_until + 3
 

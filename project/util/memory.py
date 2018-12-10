@@ -10,6 +10,7 @@ class Memory(object):
 			memory_list['$s'+str(i)] = 0
 		for i in range(10):
 			memory_list['$t'+str(i)] = 0
+		memory_list['$zero'] = 0
 		self.memory_list = memory_list
 	
 	def __str__(self):	#printing the memory in the right format
@@ -52,18 +53,18 @@ class Memory(object):
 		else:
 			if curr_line.operation == "addi":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] + \
-				int(curr_line.full[12:])
+				curr_line.registers[2]
 			elif curr_line.operation == "subi":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] - \
-				int(curr_line.full[12:])
+				curr_line.registers[2]
 			elif curr_line.operation == "andi":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] & \
-				int(curr_line.full[12:])
+				curr_line.registers[2]
 			elif curr_line.operation == "ori":
 				self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] | \
-				int(curr_line.full[11:])
+				curr_line.registers[2]
 			elif curr_line.operation == "slti":
-				if self.memory_list['$' + curr_line.registers[1]] < int(curr_line.full[12:]):
+				if self.memory_list['$' + curr_line.registers[1]] < curr_line.registers[2]:
 					self.memory_list['$' + curr_line.registers[0]] = 1
 				else:
 					self.memory_list['$' + curr_line.registers[0]] = 0

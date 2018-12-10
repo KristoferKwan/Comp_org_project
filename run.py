@@ -14,7 +14,8 @@ if __name__ == "__main__":
         exit(1)
     try:
         with open(argv[2], 'r') as file:
-            instruction_list = generate_instructions(file)
+            forwarding = argv[1]
+            instruction_list = generate_instructions(file, forwarding)
             use_forwarding = True if argv[1] == 'F' else False
             debug_print_instruction_list(instruction_list)
             # uncomment to run simulation

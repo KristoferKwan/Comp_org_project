@@ -1,7 +1,7 @@
 """ Authored jointly by the team
     Date: December 2018
 """
-
+from .memory import Memory
 
 def simulate(instruction_list, use_forwarding):
     """ Main simulation loop that outsources instruction printing to the instruction.py
