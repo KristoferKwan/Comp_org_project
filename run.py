@@ -3,7 +3,7 @@
 """
 
 from sys import argv, exit
-from project.util import simulate, generate_instructions, usage, debug_print_instruction_list
+from project.util import simulate, generate_instructions, usage, debug_print_instruction_list, Memory
 
 if __name__ == "__main__":
     """ Main function that outsources instruction generation and the simulation loop 
@@ -16,10 +16,11 @@ if __name__ == "__main__":
         with open(argv[2], 'r') as file:
             forwarding = argv[1]
             instruction_list = generate_instructions(file, forwarding)
-            use_forwarding = True if argv[1] == 'F' else False
+            memory = Memory()
+            instruction_list = generate_instructions(file)
             debug_print_instruction_list(instruction_list)
             # uncomment to run simulation
-            simulate(instruction_list, use_forwarding)
+            simulate(instruction_list, use_forwarding, memory)
             #simulate(instruction_list, use_forwarding)
 
     except IOError as e:

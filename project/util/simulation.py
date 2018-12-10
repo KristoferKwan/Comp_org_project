@@ -3,7 +3,7 @@
 """
 from .memory import Memory
 
-def simulate(instruction_list, use_forwarding):
+def simulate(instruction_list, use_forwarding, memory):
     """ Main simulation loop that outsources instruction printing to the instruction.py
         module.
 
@@ -14,7 +14,6 @@ def simulate(instruction_list, use_forwarding):
     """
 
     num_cycles = instruction_list[- 2].cycle_range[1]
-    memory = Memory()
 
     line = "----------------------------------------------------------------------------------"
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)") + "\n" + line)
@@ -28,6 +27,7 @@ def simulate(instruction_list, use_forwarding):
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[0] + 4
                     instruction_list[-1].sim_print(i, memory)
             instruction_list[j].sim_print(i, memory)
+        print(memory)
         print(line)
 
     print("END OF SIMULATION")
