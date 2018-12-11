@@ -36,6 +36,8 @@ class Memory(object):
 
 
 	def evaluate_line(self, curr_line):
+		if len(curr_line.registers) < 3:
+			return
 		second_operand = int(curr_line.registers[2]) if type(curr_line.registers[2]) is int \
 			else self.memory_list['$' + str(curr_line.registers[2])]
 		if curr_line.operation == "add":

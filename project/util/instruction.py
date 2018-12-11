@@ -133,26 +133,26 @@ def generate_instructions(file, fwd):
                 #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
                 instruction.registers.append(temp[reg2 + 1:reg2_end])
             if reg1 != -1:
-                instruction.registers.append(line[reg1 + 1:reg1_end])
+                instruction.registers.append(line[reg1 + 1:reg1_end-1])
         else:
             if reg1 != -1:
                 instruction.registers.append(line[reg1 + 1:reg1_end])
             if reg2 != -1:
                 #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
-                instruction.registers.append(temp[reg2 + 1:reg2_end])
+                end_index = reg2_end if not instruction.operation == "lw" else reg2_end - 1
+                instruction.registers.append(temp[reg2 + 1:end_index])
 
-            temp = temp[reg2_end + 1:]
-            reg3 = temp.find("$")
+            if instruction.operation != "lw":
+                temp = temp[reg2_end + 1:]
+                reg3 = temp.find("$")
 
-            #each line has at least two commas. This if statements starts by checking if there is a third.
-            if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
-                #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
-                instruction.registers.append(temp[reg3 + 1: reg3 + 3])
-            elif temp[0].isdigit(): #to parse for the digit
-                instruction.registers.append(int(temp[reg3 + 1:].strip()))
-            elif reg3 == -1:
-                num = temp.find(",")
-                instruction.registers.append(int(temp[num + 1:]))
+                #each line has at least two commas. This if statements starts by checking if there is a third.
+                if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
+                    #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
+                    instruction.registers.append(temp[reg3 + 1: reg3 + 3])
+                elif reg3 == -1:
+                    num = temp.find(",")
+                    instruction.registers.append(int(temp[num + 1:]))
 
         for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \

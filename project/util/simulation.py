@@ -13,7 +13,7 @@ def simulate(instruction_list, use_forwarding, memory):
         :type   use_forwarding:     boolean
     """
 
-    num_cycles = instruction_list[- 2].cycle_range[1]
+    num_cycles = instruction_list[-2].cycle_range[1]
 
     line = "----------------------------------------------------------------------------------"
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding else "(no forwarding)") + "\n" + line)
@@ -27,6 +27,7 @@ def simulate(instruction_list, use_forwarding, memory):
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[0] + 4
                     instruction_list[-1].sim_print(i, memory)
             instruction_list[j].sim_print(i, memory)
+        print("")
         print(memory)
         print(line)
 
