@@ -25,7 +25,7 @@ class Memory(object):
 			mem += key + " = " + str(self.memory_list[key]) 
 			if k_index % 4 == 0:
 				mem += "\n"
-			elif self.memory_list[key] == 0:
+			elif int(self.memory_list[key] / 10) <= 0:
 				mem += "\t\t"
 			else:
 				mem += "\t"
@@ -36,10 +36,13 @@ class Memory(object):
 
 
 	def evaluate_line(self, curr_line):
-		if len(curr_line.registers) < 3:
+		if curr_line.operation in ["lw", "sw"]:
 			return
-		second_operand = int(curr_line.registers[2]) if type(curr_line.registers[2]) is int \
+		second_operand = curr_line.registers[1]
+		if not curr_line.operation in ["beq", "bne"]:
+			second_operand = int(curr_line.registers[2]) if type(curr_line.registers[2]) is int \
 			else self.memory_list['$' + str(curr_line.registers[2])]
+
 		if curr_line.operation == "add":
 			self.memory_list['$' + curr_line.registers[0]] = self.memory_list['$' + curr_line.registers[1]] + \
 			 second_operand
@@ -74,6 +77,12 @@ class Memory(object):
 				self.memory_list['$' + curr_line.registers[0]] = 1
 			else:
 				self.memory_list['$' + curr_line.registers[0]] = 0
+		elif curr_line.operation == "beq":
+			self.memory_list['$' + curr_line.registers[0]] = 1 if self.memory_list['$' + curr_line.registers[1]] == \
+															 second_operand else 0
+		elif curr_line.operation == "bne":
+			self.memory_list['$' + curr_line.registers[0]] = 1 if self.memory_list['$' + curr_line.registers[1]] != \
+															 second_operand else 0
 
 #I used the following to test the memory ==> look below to see how assignments are done
 # Memory = Memory()

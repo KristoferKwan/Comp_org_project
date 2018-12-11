@@ -13,7 +13,7 @@ class Instruction(object):
         Contains a function for printing its data.
     """
     def __init__(self, full_instruction="", operation="", registers=None, start_cycle=0, end_cycle=0,
-                 nops_required=0, stall_until=0, is_dbl_dependent=False):
+                 nops_required=0, stall_until=0, is_dbl_dependent=False, offset = 0):
         self.full = full_instruction
         self.operation = operation
         self.registers = [] if registers is None else registers
@@ -21,6 +21,8 @@ class Instruction(object):
         self.nops_required = nops_required
         self.stall_until = stall_until
         self.is_double_dep = is_dbl_dependent
+        self.offset_index = offset
+
 
     def debug_print(self):
         """ Print instruction based on its class attributes in debug format.
@@ -35,6 +37,7 @@ class Instruction(object):
         print("Nops Required: " + str(self.nops_required))
         print("Stall until cycle: " + str(self.stall_until))
         print("Double Dependent? " + str(self.is_double_dep) + "\n")
+
 
     def sim_print(self, current_cycle, memory):
         """ Print instruction based on its class attributes in simulation format.
@@ -70,9 +73,11 @@ class Instruction(object):
                 else:
                     # perform logic associated with current stage
                     print(stages[stage], end='')
-                    if stage == 4:
+                    if stage == 3 and self.operation in ["bne", "beq"]:
                         memory.evaluate_line(self)
-                    # increment to next stage if applicable
+                    elif stage == 4:
+                        memory.evaluate_line(self)
+                    # increment to next stage if as necessary
                     if (stage == 0 and self.nops_required == 2) or \
                             (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
                             i >= self.stall_until:
@@ -96,13 +101,12 @@ def debug_print_instruction_list(instruction_list):
         instruction.debug_print()
 
 
-def forwarding(instruction, instruction_list, index):
-    if instruction_list[index].operation == 'sw' or instruction_list[index].operation == 'lw':
-        instruction.stall_until = instruction_list[index].cycle_range[1] - 1
-        instruction.cycle_range[1] = instruction.stall_until + 3
-    elif instruction_list[index].operation != 'nop':
-        instruction.stall_until = instruction_list[index].cycle_range[1] - 2
-        instruction.cycle_range[1] = instruction.stall_until + 3
+def forwarding(curr_instr, previous_instr, distance):
+    if previous_instr.operation == 'sw' or previous_instr.operation == 'lw' and \
+            distance == 1:
+        curr_instr.nops_required = distance
+        curr_instr.stall_until = previous_instr.cycle_range[1] - 1
+        curr_instr.cycle_range[1] = curr_instr.stall_until + 3
 
 
 def generate_instructions(file, fwd):
@@ -110,16 +114,30 @@ def generate_instructions(file, fwd):
 
         :param      file:   text or assembly file input by the user as a command-line argument
         :type       file:   file
+        :param      fwd:    specifies whether or not to apply forwarding
+        :type       fwd:    string
         :return:            list of Instruction class objects
         :rtype              list
     """
+
+    labels = dict()
     instructions = []
     current_cycle = 1
 
     for line in file:
+        line = line.replace("\n", "")
+        if line.find(":") != -1:
+            # associate label with the next instruction, works because len(instructions) corresponds to the index
+            # of the next instruction to be appended to the list
+            labels[line[:-1]] = len(instructions)
+            print(labels)
+            continue
+
         # fixme: stall_until values may not change (untested)
-        instruction = Instruction(line.replace("\n", ""), line[0:line.find(" ")], [],
-                                  current_cycle, current_cycle + 4, 0, 0, False)
+        instruction = Instruction(line, line[0:line.find(" ")], [],
+                                  current_cycle, current_cycle + 4, 0, 0, False, 0)
+
+
         reg1 = line.find("$")
         reg1_end = line.find(",")
         temp = line[reg1_end + 1:]
@@ -137,7 +155,6 @@ def generate_instructions(file, fwd):
         """
         if instruction.operation == "sw":
             if reg2 != -1:
-                #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
                 instruction.registers.append(temp[reg2 + 1:reg2_end])
             if reg1 != -1:
                 instruction.registers.append(line[reg1 + 1:reg1_end-1])
@@ -149,33 +166,36 @@ def generate_instructions(file, fwd):
                 end_index = reg2_end if not instruction.operation == "lw" else reg2_end - 1
                 instruction.registers.append(temp[reg2 + 1:end_index])
 
-            if instruction.operation != "lw":
+            if instruction.operation == "beq" or instruction.operation == "bne":
+                instruction.offset_index = labels[temp[reg2_end + 1:]]
+            elif instruction.operation != "lw":
                 temp = temp[reg2_end + 1:]
                 reg3 = temp.find("$")
 
                 #each line has at least two commas. This if statements starts by checking if there is a third.
                 if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
-                    #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
                     instruction.registers.append(temp[reg3 + 1: reg3 + 3])
                 elif reg3 == -1:
                     num = temp.find(",")
                     instruction.registers.append(int(temp[num + 1:]))
 
-        for i in range(max(len(instructions) - 2, 0), len(instructions)):
-            if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
-                    or instructions[i].registers[0] in instruction.registers[1:]:
-                distance = current_cycle - instructions[i].cycle_range[0]
-                if fwd == 'F':
-                    forwarding(instruction, instructions, i - distance + 1)
-                else:
+
+        if fwd != 'F':
+            for i in range(max(len(instructions) - 2, 0), len(instructions)):
+                if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
+                        or instructions[i].registers[0] in instruction.registers[1:]:
+                    distance = current_cycle - instructions[i].cycle_range[0]
+                    # if fwd == 'F':
+                    #     forwarding(instruction, instructions[i], distance)
+                    # else:
                     instruction.nops_required = 2 if distance == 1 else 1
                     instruction.stall_until = instructions[i].cycle_range[1]
                     instruction.cycle_range[1] = instruction.stall_until + 3
 
-        if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
-                and instruction.nops_required == 1:
-            instruction.cycle_range[1] += 1
-            instruction.is_double_dep = True
+            if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
+                    and instruction.nops_required == 1:
+                instruction.cycle_range[1] += 1
+                instruction.is_double_dep = True
 
         instructions.append(instruction)
         current_cycle += 1
