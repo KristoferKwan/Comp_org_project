@@ -43,6 +43,7 @@ class Instruction(object):
             :type   self:               Instruction
             :param  int current_cycle:  current simulation cycle
         """
+
         if(len(self.full.strip()) > 15):
             print(self.full.strip() + "\t", end='')
         else:
@@ -67,7 +68,11 @@ class Instruction(object):
                     if i != 16:
                         print('\t', end='')
                 else:
+                    # perform logic associated with current stage
                     print(stages[stage], end='')
+                    if stage == 4:
+                        memory.evaluate_line(self)
+                    # increment to next stage if applicable
                     if (stage == 0 and self.nops_required == 2) or \
                             (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
                             i >= self.stall_until:
@@ -78,8 +83,6 @@ class Instruction(object):
                 print('.\t', end='')
             else:
                 print('.', end='')
-            if stage == 4:
-                memory.evaluate_line(self)
         print('')
 
 
@@ -95,10 +98,10 @@ def debug_print_instruction_list(instruction_list):
 
 def forwarding(instruction, instruction_list, index):
     if instruction_list[index].operation == 'sw' or instruction_list[index].operation == 'lw':
-        instruction.stall_until = instructions[index].cycle_range[1] - 1    
+        instruction.stall_until = instruction_list[index].cycle_range[1] - 1
         instruction.cycle_range[1] = instruction.stall_until + 3
     elif instruction_list[index].operation != 'nop':
-        instruction.stall_until = instructions[index].cycle_range[1] - 2    
+        instruction.stall_until = instruction_list[index].cycle_range[1] - 2
         instruction.cycle_range[1] = instruction.stall_until + 3
 
 
@@ -166,7 +169,7 @@ def generate_instructions(file, fwd):
                 if fwd == 'F':
                     forwarding(instruction, instructions, i - distance + 1)
                 else:
-                    instruction.stall_until = instructions[i].cycle_range[1]    
+                    instruction.stall_until = instructions[i].cycle_range[1]
                     instruction.cycle_range[1] = instruction.stall_until + 3
 
         if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
