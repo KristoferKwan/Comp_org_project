@@ -165,10 +165,10 @@ def generate_instructions(file, fwd):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                     or instructions[i].registers[0] in instruction.registers[1:]:
                 distance = current_cycle - instructions[i].cycle_range[0]
-                instruction.nops_required = 2 if distance == 1 else 1
                 if fwd == 'F':
                     forwarding(instruction, instructions, i - distance + 1)
                 else:
+                    instruction.nops_required = 2 if distance == 1 else 1
                     instruction.stall_until = instructions[i].cycle_range[1]
                     instruction.cycle_range[1] = instruction.stall_until + 3
 

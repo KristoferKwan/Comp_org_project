@@ -13,19 +13,22 @@ def simulate(instruction_list, use_forwarding, memory):
         :type   use_forwarding:     boolean
     """
 
+    num_instructions_fetched = 1
     num_cycles = instruction_list[-2].cycle_range[1]
     line = "----------------------------------------------------------------------------------"
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding == "F" else "(no forwarding)") + "\n" + line)
 
     for i in range(1, num_cycles + 1):
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\n")
-        for j in range(0, len(instruction_list) - 1):
+        for j in range(0, num_instructions_fetched):
             if j > 0 and not instruction_list[j].is_double_dep and i >= instruction_list[j].cycle_range[0] + 2:
                 for k in range(0, instruction_list[j].nops_required):       #stall
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[0] + 4
                     instruction_list[-1].sim_print(i, memory)
             instruction_list[j].sim_print(i, memory)
+        if num_instructions_fetched != len(instruction_list) - 1:
+            num_instructions_fetched += 1
         print("")
         print(memory)
         print(line)
