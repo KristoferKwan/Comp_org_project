@@ -78,11 +78,9 @@ class Memory(object):
 			else:
 				self.memory_list['$' + curr_line.registers[0]] = 0
 		elif curr_line.operation == "beq":
-			self.memory_list['$' + curr_line.registers[0]] = 1 if self.memory_list['$' + curr_line.registers[1]] == \
-															 second_operand else 0
+			curr_line.should_branch = self.memory_list['$' + curr_line.registers[1]] == second_operand
 		elif curr_line.operation == "bne":
-			self.memory_list['$' + curr_line.registers[0]] = 1 if self.memory_list['$' + curr_line.registers[1]] != \
-															 second_operand else 0
+			curr_line.should_branch = self.memory_list['$' + curr_line.registers[1]] != second_operand
 
 #I used the following to test the memory ==> look below to see how assignments are done
 # Memory = Memory()
