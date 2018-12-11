@@ -93,9 +93,13 @@ def debug_print_instruction_list(instruction_list):
         instruction.debug_print()
 
 
-def forwarding(instruction, instruction_list):
-    print(instruction_list)
-    return 
+def forwarding(instruction, instruction_list, index):
+    if instruction_list[index].operation == 'sw' or instruction_list[index].operation == 'lw':
+        instruction.stall_until = instructions[index].cycle_range[1] - 1    
+        instruction.cycle_range[1] = instruction.stall_until + 3
+    elif instruction_list[index].operation != 'nop':
+        instruction.stall_until = instructions[index].cycle_range[1] - 2    
+        instruction.cycle_range[1] = instruction.stall_until + 3
 
 
 def generate_instructions(file, fwd):
@@ -160,9 +164,10 @@ def generate_instructions(file, fwd):
                 distance = current_cycle - instructions[i].cycle_range[0]
                 instruction.nops_required = 2 if distance == 1 else 1
                 if fwd == 'F':
-                    forwarding(instruction, instructions)
-                instruction.stall_until = instructions[i].cycle_range[1]    
-                instruction.cycle_range[1] = instruction.stall_until + 3
+                    forwarding(instruction, instructions, i - distance + 1)
+                else:
+                    instruction.stall_until = instructions[i].cycle_range[1]    
+                    instruction.cycle_range[1] = instruction.stall_until + 3
 
         if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
                 and instruction.nops_required == 1:
