@@ -17,10 +17,9 @@ if __name__ == "__main__":
             forwarding = argv[1]
             instruction_list = generate_instructions(file, forwarding)
             memory = Memory()
-            instruction_list = generate_instructions(file)
             debug_print_instruction_list(instruction_list)
             # uncomment to run simulation
-            simulate(instruction_list, use_forwarding, memory)
+            simulate(instruction_list, forwarding, memory)
             #simulate(instruction_list, use_forwarding)
 
     except IOError as e:

@@ -143,13 +143,16 @@ def generate_instructions(file, fwd):
 
             temp = temp[reg2_end + 1:]
             reg3 = temp.find("$")
-            
+
             #each line has at least two commas. This if statements starts by checking if there is a third.
             if reg2_end != -1 and reg3 != -1: #formerly if reg3 != -1.
                 #formerly: instruction.registers.append(line[reg3 + 1:reg3 + 3])
                 instruction.registers.append(temp[reg3 + 1: reg3 + 3])
             elif temp[0].isdigit(): #to parse for the digit
                 instruction.registers.append(int(temp[reg3 + 1:].strip()))
+            elif reg3 == -1:
+                num = temp.find(",")
+                instruction.registers.append(int(temp[num + 1:]))
 
         for i in range(max(len(instructions) - 2, 0), len(instructions)):
             if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
