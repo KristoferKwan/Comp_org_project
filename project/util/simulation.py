@@ -27,7 +27,8 @@ def loop(branch_instr, instr_list):
             instr_cpy.branch_range[1] += num_affected - loop_indx
         #print("This is the cycle range: {:d} - {:d}".format(branch_instr.cycle_range[0], branch_instr.cycle_range[1]))
         instr_cpy.cycle_range[0] = branch_instr.cycle_range[0] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles
-        instr_cpy.cycle_range[1] = branch_instr.cycle_range[1] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles 
+        instr_cpy.cycle_range[1] = branch_instr.cycle_range[1] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles
+        instr_cpy.is_evaluated = False
         looped_inst.append(instr_cpy)
 
     for i in range(loop_end + 1, num_affected):
