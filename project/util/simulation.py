@@ -23,8 +23,8 @@ def loop(branch_instr, instr_list):
         distance_from_stall = i - loop_indx        #   distance from the last stalled instruction   
         instr_cpy = copy.deepcopy(instr_list[i])
         if(instr_cpy.operation == "bne" or instr_cpy.operation == "beq"):
-            instr_cpy.branch_range[0] += num_affected - loop_indx 
-            instr_cpy.branch_range[1] += num_affected - loop_indx
+            instr_cpy.branch_range[0] += loop_and_stall_size 
+            instr_cpy.branch_range[1] += loop_and_stall_size
         #print("This is the cycle range: {:d} - {:d}".format(branch_instr.cycle_range[0], branch_instr.cycle_range[1]))
         instr_cpy.cycle_range[0] = branch_instr.cycle_range[0] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles
         instr_cpy.cycle_range[1] = branch_instr.cycle_range[1] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles

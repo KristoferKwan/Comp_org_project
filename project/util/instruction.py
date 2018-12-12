@@ -1,7 +1,10 @@
 """ Author: Peter Gravelin
     Date: 2018 December
 """
-
+def print_list(instr_list):
+    for item in instr_list:
+        item.debug_print()
+    print()
 
 class Instruction(object):
     """ Instruction class definition that holds information for the instruction's
@@ -28,7 +31,7 @@ class Instruction(object):
         self.is_evaluated = is_evaluated
 
     def __str__(self):
-        return self.operation
+        return self.full
 
     def debug_print(self):
         """ Print instruction based on its class attributes in debug format.
@@ -56,6 +59,8 @@ class Instruction(object):
 
         if(len(self.full.strip()) > 15):
             print(self.full.strip() + "\t", end='')
+        elif(self.operation == "nop"):
+            print(self.full.strip() + "\t\t\t", end='')
         else:
             print(self.full.strip() + "\t\t", end='')
         if current_cycle < self.cycle_range[0]:
@@ -135,6 +140,7 @@ def generate_instructions(file, fwd):
     current_cycle = 1
     instruction_count = 0
     branch = 1
+    stalled = -1
     label = dict()
     for line in file:
         line = line.replace("\n", "")
@@ -193,16 +199,28 @@ def generate_instructions(file, fwd):
                     instruction.registers.append(int(temp[num + 1:]))
 
         if fwd != 'F':
+            if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled        distance = current_cycle - stall_instr.cycle_range[0]
+                instruction.stall_until = stall_instr.cycle_range[1] - 1 #this is correct
+                instruction.cycle_range[1] = instruction.stall_until + 3 + start_stall
+                start_stall += 1
+                if instructions[i].stall_until == current_cycle:
+                    stalled = -1
+
             for i in range(max(len(instructions) - 2, 0), len(instructions)):
+
                 if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                         or instructions[i].registers[0] in instruction.registers[1:]:
                     distance = current_cycle - instructions[i].cycle_range[0]
                     # if fwd == 'F':
                     #     forwarding(instruction, instructions[i], distance)
                     # else:
+                    print("The stalling for", instructions[i], "with instruction as", instruction)
                     instruction.nops_required = 2 if distance == 1 else 1
-                    instruction.stall_until = instructions[i].cycle_range[1]
+                    instruction.stall_until = instructions[i].cycle_range[1] - 1
                     instruction.cycle_range[1] = instruction.stall_until + 3
+                    stall_instr = instructions[i]
+                    stalled = i
+                    start_stall = 1
 
             if len(instructions) > 0 and instructions[len(instructions) - 1].nops_required == 2 \
                     and instruction.nops_required == 1:
