@@ -86,7 +86,7 @@ class Instruction(object):
                     if stage == 3 and self.operation in ["bne", "beq"] and not self.is_evaluated:
                         memory.evaluate_line(self)
                         self.is_evaluated = True
-                    elif stage == 4 and not self.is_evaluated:
+                    elif stage == 4 and not self.is_evaluated and stages[4] != "*":
                         memory.evaluate_line(self)
                         self.is_evaluated = True
                     # increment to next stage if as necessary
