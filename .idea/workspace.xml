@@ -2,22 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b0b9c23-cb90-4c43-9f7e-3f64a2b65e3a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/final.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/final1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/final2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/instruction.py" beforeDir="false" afterPath="$PROJECT_DIR$/final_submit/instruction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/out.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/out6.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/final_submit/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/final_submit/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/util/instruction.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/util/instruction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/util/memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/util/memory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/util/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/util/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test cases/project/ex01.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test cases/project/ex02.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test cases/project/ex03.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/two.txt" beforeDir="false" />
     </list>
     <ignored mask="pycache" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,7 +60,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="128">
@@ -82,20 +69,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/final_submit/instruction.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="295">
               <caret line="79" column="35" selection-start-line="79" selection-start-column="35" selection-end-line="79" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/out.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="35" selection-start-line="35" selection-end-line="35" />
             </state>
           </provider>
         </entry>
@@ -480,13 +458,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/two.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1887">
-          <caret line="111" column="43" lean-forward="true" selection-start-line="111" selection-start-column="43" selection-end-line="111" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test cases/project/p1-output06.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
@@ -562,13 +533,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/out.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="35" selection-start-line="35" selection-end-line="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/final_submit/ofos.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="505">
@@ -578,13 +542,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/final_submit/out.txt">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/final_submit/instruction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="79" column="35" selection-start-line="79" selection-start-column="35" selection-end-line="79" selection-end-column="35" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/project/util/instruction.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -622,10 +579,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/two.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="649">
+          <caret line="111" column="43" lean-forward="true" selection-start-line="111" selection-start-column="43" selection-end-line="111" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="128">
           <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/out.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/final_submit/instruction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="79" column="35" selection-start-line="79" selection-start-column="35" selection-end-line="79" selection-end-column="35" />
         </state>
       </provider>
     </entry>
