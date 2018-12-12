@@ -57,14 +57,12 @@ class Instruction(object):
             :param  int current_cycle:  current simulation cycle
         """
 
-        if(len(self.full.strip()) > 15):
-            print(self.full.strip() + "\t", end='')
-        elif(self.operation == "nop"):
-            print(self.full.strip() + "\t\t\t", end='')
-        else:
-            print(self.full.strip() + "\t\t", end='')
+
+        print(self.full.strip().ljust(20, ' '), end='')
+        empty_cycle = ".".ljust(4, ' ')
         if current_cycle < self.cycle_range[0]:
-            print(".\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n", end='')
+            
+            print(empty_cycle * 15 + ".\n", end='')
             return
 
         if len(self.stages) != 0:
@@ -80,14 +78,14 @@ class Instruction(object):
                 if self.operation == "nop":
                     determinate = i - self.cycle_range[0]
                     if determinate >= 2:
-                        print(stages[5], end='')
+                        print(str(stages[5]).ljust(4, ' '), end='')
+                    elif i != 16:
+                        print(str(stages[determinate]).ljust(4, ' '), end='')
                     else:
-                        print(stages[determinate], end='')
-                    if i != 16:
-                        print('\t', end='')
+                        print(str(stages[determinate]), end='')
                 else:
                     # perform logic associated with current stage
-                    print(stages[stage], end='')
+                    print(str(stages[stage]).ljust(4, ' '), end='')
                     if stage == 3 and self.operation in ["bne", "beq"] and not self.is_evaluated:
                         memory.evaluate_line(self)
                         self.is_evaluated = True
@@ -99,10 +97,10 @@ class Instruction(object):
                             (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
                             i >= self.stall_until:
                         stage += 1
-                    if i != 16:
-                        print('\t', end='')
+                    # if i != 16:
+                    #     print(' ' * 4, end='')
             elif i != 16:
-                print('.\t', end='')
+                print(empty_cycle, end='')
             else:
                 print('.', end='')
         print('')
