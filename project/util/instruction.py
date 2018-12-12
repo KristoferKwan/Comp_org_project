@@ -226,7 +226,9 @@ def generate_instructions(file, fwd):
                     and instruction.nops_required == 1:
                 instruction.cycle_range[1] += 1
                 instruction.is_double_dep = True
-
+        if fwd == 'F':
+            pass
+            # forwarding(instruction, instructions[len(instructions)-1], current_cycle - instructions[len(instructions)-1].cycle_range[0])
         instructions.append(instruction)
         current_cycle += 1
         instruction_count += 1
