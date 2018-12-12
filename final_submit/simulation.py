@@ -52,13 +52,15 @@ def simulate(instruction_list, use_forwarding, memory):
     num_instructions_fetched = 1
     i = 0
     num_cycles = instruction_list[-2].cycle_range[0]
+    you_got_in_here = False
     line = "----------------------------------------------------------------------------------"
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding == "F" else "(no forwarding)") + "\n" + line)
 
     while(i <= 16 and i+1 <= instruction_list[-2].cycle_range[1]):
         i += 1
         print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
-        for j in range(0, num_instructions_fetched):
+        j = 0
+        while(j < num_instructions_fetched):
             if j > 0 and not instruction_list[j].is_double_dep and i >= instruction_list[j].cycle_range[0] + 2:
                 for k in range(0, instruction_list[j].nops_required):       #stall
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
@@ -69,11 +71,18 @@ def simulate(instruction_list, use_forwarding, memory):
                     instruction_list = loop(instruction_list[j], instruction_list)
                     num_cycles = instruction_list[-2].cycle_range[0]
                     instruction_list[j].should_branch = False
+                    num_instructions_fetched += 1
+                    you_got_in_here = True
             instruction_list[j].sim_print(i, memory)
-        if num_instructions_fetched != len(instruction_list) - 1:
+            j += 1
+        if num_instructions_fetched != len(instruction_list) - 1 and not you_got_in_here:
             num_instructions_fetched += 1
+        else:
+            you_got_in_here = False
         print("")
         print(memory)
         print(line)
+        if num_instructions_fetched >= 16:
+            break
         #print("{:d}  != {:d}".format( num_instructions_fetched, len(instruction_list) - 1))
     print("END OF SIMULATION")
