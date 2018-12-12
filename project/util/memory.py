@@ -18,17 +18,18 @@ class Memory(object):
 		mem_sort.sort()	#create a list and sorts it so that the order of the registers is maintained
 		k_index = 0
 		mem = ""
+		register = ""
 		for key in mem_sort:
 			if key == "$zero":
 				continue
 			k_index+=1
-			mem += key + " = " + str(self.memory_list[key]) 
 			if k_index % 4 == 0:
-				mem += "\n"
-			elif int(self.memory_list[key] / 10) <= 0:
-				mem += "\t\t"
+				register = str(key + " = " + str(self.memory_list[key]) + "\n")
+			elif k_index == len(mem_sort) - 1:
+				register = str(key + " = " + str(self.memory_list[key]))
 			else:
-				mem += "\t"
+				register = str(key + " = " + str(self.memory_list[key])).ljust(20, " ")
+			mem += register
 		return mem
 
 	def	get_memory_list(self):	#returns the memory_list referenced

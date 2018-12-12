@@ -57,14 +57,12 @@ class Instruction(object):
             :param  int current_cycle:  current simulation cycle
         """
 
-        if(len(self.full.strip()) > 15):
-            print(self.full.strip() + "\t", end='')
-        elif(self.operation == "nop"):
-            print(self.full.strip() + "\t\t\t", end='')
-        else:
-            print(self.full.strip() + "\t\t", end='')
+
+        print(self.full.strip().ljust(20, ' '), end='')
+        empty_cycle = ".".ljust(4, ' ')
         if current_cycle < self.cycle_range[0]:
-            print(".\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n", end='')
+
+            print(empty_cycle * 15 + ".\n", end='')
             return
 
         if len(self.stages) != 0:
@@ -80,14 +78,17 @@ class Instruction(object):
                 if self.operation == "nop":
                     determinate = i - self.cycle_range[0]
                     if determinate >= 2:
-                        print(stages[5], end='')
+                        print(str(stages[5]).ljust(4, ' '), end='')
+                    elif i != 16:
+                        print(str(stages[determinate]).ljust(4, ' '), end='')
                     else:
-                        print(stages[determinate], end='')
-                    if i != 16:
-                        print('\t', end='')
+                        print(str(stages[determinate]), end='')
                 else:
                     # perform logic associated with current stage
-                    print(stages[stage], end='')
+                    if i != 16:
+                        print(str(stages[stage]).ljust(4, ' '), end='')
+                    else:
+                        print(str(stages[stage]), end='')
                     if stage == 3 and self.operation in ["bne", "beq"] and not self.is_evaluated:
                         memory.evaluate_line(self)
                         self.is_evaluated = True
@@ -99,10 +100,10 @@ class Instruction(object):
                             (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
                             i >= self.stall_until:
                         stage += 1
-                    if i != 16:
-                        print('\t', end='')
+                    # if i != 16:
+                    #     print(' ' * 4, end='')
             elif i != 16:
-                print('.\t', end='')
+                print(empty_cycle, end='')
             else:
                 print('.', end='')
         print('')
@@ -179,7 +180,6 @@ def generate_instructions(file, fwd):
             if reg1 != -1:
                 instruction.registers.append(line[reg1 + 1:reg1_end])
             if reg2 != -1:
-                #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
                 end_index = reg2_end if not instruction.operation == "lw" else reg2_end - 1
                 instruction.registers.append(temp[reg2 + 1:end_index])
 
@@ -199,9 +199,9 @@ def generate_instructions(file, fwd):
                     instruction.registers.append(int(temp[num + 1:]))
 
         if fwd != 'F':
-            if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled
-                instruction.stall_until = stall_instr[i].cycle_range[1] - 1 \
-                        if stall_instr[i].operation in ["sw", "lw"] else stall_instr[i].cycle_range[1]
+            if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled        distance = current_cycle - stall_instr.cycle_range[0]
+                instruction.stall_until = stall_instr.cycle_range[1] - 1 \
+                    if stall_instr.operation in ["sw", "lw"] else stall_instr.cycle_range[1]
                 instruction.cycle_range[1] = instruction.stall_until + 3 + start_stall
                 start_stall += 1
                 if instructions[i].stall_until == current_cycle:
@@ -224,9 +224,8 @@ def generate_instructions(file, fwd):
                     and instruction.nops_required == 1:
                 instruction.cycle_range[1] += 1
                 instruction.is_double_dep = True
-        if fwd == 'F':
-            pass
-            # forwarding(instruction, instructions[len(instructions)-1], current_cycle - instructions[len(instructions)-1].cycle_range[0])
+        if fwd == 'F' and len(instructions) != 0:
+            forwarding(instruction, instructions[len(instructions)-1], current_cycle - instructions[len(instructions)-1].cycle_range[0])
         instructions.append(instruction)
         current_cycle += 1
         instruction_count += 1

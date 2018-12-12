@@ -85,7 +85,10 @@ class Instruction(object):
                         print(str(stages[determinate]), end='')
                 else:
                     # perform logic associated with current stage
-                    print(str(stages[stage]).ljust(4, ' '), end='')
+                    if i != 16:
+                        print(str(stages[stage]).ljust(4, ' '), end='')
+                    else:
+                        print(str(stages[stage]), end='')
                     if stage == 3 and self.operation in ["bne", "beq"] and not self.is_evaluated:
                         memory.evaluate_line(self)
                         self.is_evaluated = True

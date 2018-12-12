@@ -3,7 +3,10 @@
 """
 
 from sys import argv, exit
-from project.util import simulate, generate_instructions, usage, debug_print_instruction_list, Memory
+from simulation import simulate
+from instruction import generate_instructions, debug_print_instruction_list
+from helper import usage
+from memory import Memory
 
 if __name__ == "__main__":
     """ Main function that outsources instruction generation and the simulation loop 

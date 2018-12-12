@@ -51,31 +51,31 @@ def simulate(instruction_list, use_forwarding, memory):
     """
     num_instructions_fetched = 1
     i = 0
-    num_cycles = instruction_list[-2].cycle_range[0]
     line = "----------------------------------------------------------------------------------"
     print("START OF SIMULATION " + ("(forwarding)" if use_forwarding == "F" else "(no forwarding)") + "\n" + line)
 
-    while(i <= 16 and i+1 <= instruction_list[-2].cycle_range[1]):
+    while i <= 16 and i+1 <= instruction_list[-2].cycle_range[1]:
         i += 1
-        print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+        print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
         j = 0
-        while(j <= num_instructions_fetched):
+        while j < num_instructions_fetched:
             if j > 0 and not instruction_list[j].is_double_dep and i >= instruction_list[j].cycle_range[0] + 2:
                 for k in range(0, instruction_list[j].nops_required):       #stall
                     instruction_list[-1].cycle_range[0] = instruction_list[j].cycle_range[0]
                     instruction_list[-1].cycle_range[1] = instruction_list[j].cycle_range[0] + 4
                     instruction_list[-1].sim_print(i, memory)
-            if((instruction_list[j].operation == "bne" or instruction_list[j].operation == "beq")):
-                if instruction_list[j].should_branch == True:
+            instruction_list[j].sim_print(i, memory)
+            if instruction_list[j].operation == "bne" or instruction_list[j].operation == "beq":
+                if instruction_list[j].should_branch:
                     instruction_list = loop(instruction_list[j], instruction_list)
                     num_cycles = instruction_list[-2].cycle_range[0]
                     instruction_list[j].should_branch = False
-                    num_instructions_fetched += 1
-            instruction_list[j].sim_print(i, memory)
-            j+=1
+            j += 1
         if num_instructions_fetched != len(instruction_list) - 1:
             num_instructions_fetched += 1
         print("")
         print(memory)
         print(line)
+        if num_instructions_fetched > 16:
+            break
     print("END OF SIMULATION")
