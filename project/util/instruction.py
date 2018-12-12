@@ -13,7 +13,7 @@ class Instruction(object):
         Contains a function for printing its data.
     """
     def __init__(self, full_instruction="", operation="", registers=None, start_cycle=0, end_cycle=0,
-                 nops_required=0, stall_until=0, is_dbl_dependent=False, should_branch=False, offset=0):
+                 nops_required=0, stall_until=0, is_dbl_dependent=False, should_branch=False, offset=0, is_evaluated = False):
         self.full = full_instruction
         self.operation = operation
         self.registers = [] if registers is None else registers
@@ -23,7 +23,12 @@ class Instruction(object):
         self.is_double_dep = is_dbl_dependent
         self.should_branch = should_branch
         self.offset_index = offset
+        self.stages = []
+        self.branch_range = []
+        self.is_evaluated = is_evaluated
 
+    def __str__(self):
+        return self.operation
 
     def debug_print(self):
         """ Print instruction based on its class attributes in debug format.
@@ -37,8 +42,8 @@ class Instruction(object):
         print("Cycle Range: " + str(self.cycle_range))
         print("Nops Required: " + str(self.nops_required))
         print("Stall until cycle: " + str(self.stall_until))
-        print("Double Dependent? " + str(self.is_double_dep) + "\n")
-
+        print("Double Dependent? " + str(self.is_double_dep))
+        print("Stall Stages:", self.stages, "\n")
 
     def sim_print(self, current_cycle, memory):
         """ Print instruction based on its class attributes in simulation format.
@@ -56,7 +61,10 @@ class Instruction(object):
             print(".\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n", end='')
             return
 
-        stages = ["IF", "ID", "EX", "MEM", "WB", "*"]
+        if len(self.stages) != 0:
+            stages = self.stages
+        else:
+            stages = ["IF", "ID", "EX", "MEM", "WB", "*"]
         stage = 0
 
         for i in range(1, 17):
@@ -74,10 +82,12 @@ class Instruction(object):
                 else:
                     # perform logic associated with current stage
                     print(stages[stage], end='')
-                    if stage == 3 and self.operation in ["bne", "beq"]:
+                    if stage == 3 and self.operation in ["bne", "beq"] and not self.is_evaluated:
                         memory.evaluate_line(self)
-                    elif stage == 4:
+                        self.is_evaluated = True
+                    elif stage == 4 and not self.is_evaluated:
                         memory.evaluate_line(self)
+                        self.is_evaluated = True
                     # increment to next stage if as necessary
                     if (stage == 0 and self.nops_required == 2) or \
                             (stage == 0 and self.nops_required == 1 and not self.is_double_dep) or \
@@ -101,14 +111,12 @@ def debug_print_instruction_list(instruction_list):
     for instruction in instruction_list:
         instruction.debug_print()
 
-
 def forwarding(curr_instr, previous_instr, distance):
     if previous_instr.operation == 'sw' or previous_instr.operation == 'lw' and \
             distance == 1:
         curr_instr.nops_required = distance
         curr_instr.stall_until = previous_instr.cycle_range[1] - 1
         curr_instr.cycle_range[1] = curr_instr.stall_until + 3
-
 
 def generate_instructions(file, fwd):
     """ Generate Instruction class instances based on the input file and return them.
@@ -124,7 +132,9 @@ def generate_instructions(file, fwd):
     labels = dict()
     instructions = []
     current_cycle = 1
-
+    instruction_count = 0
+    branch = 1
+    label = dict()
     for line in file:
         line = line.replace("\n", "")
         if line.find(":") != -1:
@@ -153,6 +163,7 @@ def generate_instructions(file, fwd):
         3.Created new variable reg_end as an ending constraint of registers in the strings.
         Necessary due to registers having inconsistent string length. e.g. $t1,$zero
         """
+
         if instruction.operation == "sw":
             if reg2 != -1:
                 instruction.registers.append(temp[reg2 + 1:reg2_end])
@@ -168,6 +179,9 @@ def generate_instructions(file, fwd):
 
             if instruction.operation == "beq" or instruction.operation == "bne":
                 instruction.offset_index = labels[temp[reg2_end + 1:]]
+                print("this is the offset:",instruction_count)
+                instruction.branch_range.append(instruction.offset_index)
+                instruction.branch_range.append(instruction_count)
             elif instruction.operation != "lw":
                 temp = temp[reg2_end + 1:]
                 reg3 = temp.find("$")
@@ -177,8 +191,8 @@ def generate_instructions(file, fwd):
                     instruction.registers.append(temp[reg3 + 1: reg3 + 3])
                 elif reg3 == -1:
                     num = temp.find(",")
+                    print(temp[num + 1:] + "\n")
                     instruction.registers.append(int(temp[num + 1:]))
-
 
         if fwd != 'F':
             for i in range(max(len(instructions) - 2, 0), len(instructions)):
@@ -199,6 +213,6 @@ def generate_instructions(file, fwd):
 
         instructions.append(instruction)
         current_cycle += 1
-
+        instruction_count += 1
     instructions.append(Instruction("nop\t", "nop", [], -1, -1, 0, 0, False))
     return instructions
