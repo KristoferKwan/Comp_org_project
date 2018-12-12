@@ -43,7 +43,8 @@ class Instruction(object):
         print("Nops Required: " + str(self.nops_required))
         print("Stall until cycle: " + str(self.stall_until))
         print("Double Dependent? " + str(self.is_double_dep))
-        print("Stall Stages:", self.stages, "\n")
+        print("Stall Stages:", self.stages)
+        print("Branch Range: " + str(self.branch_range) + "\n")
 
     def sim_print(self, current_cycle, memory):
         """ Print instruction based on its class attributes in simulation format.
@@ -141,7 +142,6 @@ def generate_instructions(file, fwd):
             # associate label with the next instruction, works because len(instructions) corresponds to the index
             # of the next instruction to be appended to the list
             labels[line[:-1]] = len(instructions)
-            print(labels)
             continue
 
         # fixme: stall_until values may not change (untested)
@@ -179,7 +179,6 @@ def generate_instructions(file, fwd):
 
             if instruction.operation == "beq" or instruction.operation == "bne":
                 instruction.offset_index = labels[temp[reg2_end + 1:]]
-                print("this is the offset:",instruction_count)
                 instruction.branch_range.append(instruction.offset_index)
                 instruction.branch_range.append(instruction_count)
             elif instruction.operation != "lw":
@@ -191,7 +190,6 @@ def generate_instructions(file, fwd):
                     instruction.registers.append(temp[reg3 + 1: reg3 + 3])
                 elif reg3 == -1:
                     num = temp.find(",")
-                    print(temp[num + 1:] + "\n")
                     instruction.registers.append(int(temp[num + 1:]))
 
         if fwd != 'F':

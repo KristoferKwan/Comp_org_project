@@ -1,8 +1,8 @@
 """ Authored jointly by the team
     Date: December 2018
 """
-from .memory import Memory
 import copy
+
 def print_list(instr_list):
     for item in instr_list:
         item.debug_print()
@@ -14,32 +14,30 @@ def loop(branch_instr, instr_list):
     stages = ["IF", "ID", "EX", "MEM", "WB", "*"]
     loop_indx = branch_instr.branch_range[0] 
     loop_end = branch_instr.branch_range[1]
-    #print("loop_indx =", loop_indx)
-    #print("loop_end =", loop_end)
     num_affected = min(4 + loop_end, len(instr_list))
-
+    stall_size = num_affected - loop_end            #   how many instructions are being stalled after the end of the loop(bne and beq)
+    loop_and_stall_size = num_affected - loop_indx  #   how many instructions between the start of the loop branch to the last stalled instruction
     looped_inst = []
+    
     for i in range(loop_indx, num_affected):
+        distance_from_stall = i - loop_indx        #   distance from the last stalled instruction   
         instr_cpy = copy.deepcopy(instr_list[i])
-        instr_cpy.cycle_range[0] = branch_instr.cycle_range[0] + i + num_affected - loop_end - 1 #changing the start index and the end index start and end cycles
-        instr_cpy.cycle_range[1] = branch_instr.cycle_range[1] + i + num_affected - loop_end - 1 #changing the start index and the end index start and end cycles 
         if(instr_cpy.operation == "bne" or instr_cpy.operation == "beq"):
-            instr_cpy.branch_range[0] += loop_end - loop_indx  
-            instr_cpy.branch_range[1] += loop_end - loop_indx  
+            instr_cpy.branch_range[0] += num_affected - loop_indx 
+            instr_cpy.branch_range[1] += num_affected - loop_indx
+        #print("This is the cycle range: {:d} - {:d}".format(branch_instr.cycle_range[0], branch_instr.cycle_range[1]))
+        instr_cpy.cycle_range[0] = branch_instr.cycle_range[0] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles
+        instr_cpy.cycle_range[1] = branch_instr.cycle_range[1] + distance_from_stall + stall_size   #   changing the start index and the end index start and end cycles 
         looped_inst.append(instr_cpy)
 
     for i in range(loop_end + 1, num_affected):
         instr_list[i].stages = stages[: 5 -  (i - loop_end + 1)] + ["*"] * ((i - loop_end) + 1)
-        # instr_list[i].stages += stages[5] * (6 - curr_stage)
-        #this is to take the instructions and change stage accordingly
-        #print("PRINT")
-        #print("{:s}: instr_list[i].stages".format(instr_list[i].operation), instr_list[i].stages)
-    #print_list(instr_list)
+
     nop = instr_list[-1]
     instr_list = (instr_list[0: -1] + looped_inst)
     instr_list.append(nop)
+    # print_list(instr_list)
     return instr_list
-    #you will need to change the cycle range 
 
 def simulate(instruction_list, use_forwarding, memory):
     """ Main simulation loop that outsources instruction printing to the instruction.py
