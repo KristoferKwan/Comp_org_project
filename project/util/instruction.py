@@ -199,8 +199,9 @@ def generate_instructions(file, fwd):
                     instruction.registers.append(int(temp[num + 1:]))
 
         if fwd != 'F':
-            if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled        distance = current_cycle - stall_instr.cycle_range[0]
-                instruction.stall_until = stall_instr.cycle_range[1] - 1 #this is correct
+            if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled
+                instruction.stall_until = stall_instr[i].cycle_range[1] - 1 \
+                        if stall_instr[i].operation in ["sw", "lw"] else stall_instr[i].cycle_range[1]
                 instruction.cycle_range[1] = instruction.stall_until + 3 + start_stall
                 start_stall += 1
                 if instructions[i].stall_until == current_cycle:
@@ -211,12 +212,9 @@ def generate_instructions(file, fwd):
                 if (instruction.operation == "sw" and instructions[i].registers[0] == instruction.registers[0]) \
                         or instructions[i].registers[0] in instruction.registers[1:]:
                     distance = current_cycle - instructions[i].cycle_range[0]
-                    # if fwd == 'F':
-                    #     forwarding(instruction, instructions[i], distance)
-                    # else:
-                    print("The stalling for", instructions[i], "with instruction as", instruction)
                     instruction.nops_required = 2 if distance == 1 else 1
-                    instruction.stall_until = instructions[i].cycle_range[1] - 1
+                    instruction.stall_until = instructions[i].cycle_range[1] - 1 \
+                        if instructions[i].operation in ["sw", "lw"] else instructions[i].cycle_range[1]
                     instruction.cycle_range[1] = instruction.stall_until + 3
                     stall_instr = instructions[i]
                     stalled = i

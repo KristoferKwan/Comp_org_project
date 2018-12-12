@@ -22,8 +22,6 @@ if __name__ == "__main__":
             memory = Memory()
             # uncomment to run simulation
             simulate(instruction_list, forwarding, memory)
-            #simulate(instruction_list, use_forwarding)
-
     except IOError as e:
         usage()
         exit(1)

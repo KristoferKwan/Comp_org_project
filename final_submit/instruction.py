@@ -177,7 +177,6 @@ def generate_instructions(file, fwd):
             if reg1 != -1:
                 instruction.registers.append(line[reg1 + 1:reg1_end])
             if reg2 != -1:
-                #formerly: instruction.registers.append(line[reg2 + 1:reg2 + 3])
                 end_index = reg2_end if not instruction.operation == "lw" else reg2_end - 1
                 instruction.registers.append(temp[reg2 + 1:end_index])
 
@@ -198,7 +197,8 @@ def generate_instructions(file, fwd):
 
         if fwd != 'F':
             if  stalled != -1:  #will only try to stall if the index is greater than where it was initially stalled        distance = current_cycle - stall_instr.cycle_range[0]
-                instruction.stall_until = stall_instr.cycle_range[1] - 1 #this is correct
+                instruction.stall_until = stall_instr.cycle_range[1] - 1 \
+                    if stall_instr.operation in ["sw", "lw"] else stall_instr.cycle_range[1]
                 instruction.cycle_range[1] = instruction.stall_until + 3 + start_stall
                 start_stall += 1
                 if instructions[i].stall_until == current_cycle:
@@ -210,7 +210,8 @@ def generate_instructions(file, fwd):
                         or instructions[i].registers[0] in instruction.registers[1:]:
                     distance = current_cycle - instructions[i].cycle_range[0]
                     instruction.nops_required = 2 if distance == 1 else 1
-                    instruction.stall_until = instructions[i].cycle_range[1] - 1
+                    instruction.stall_until = instructions[i].cycle_range[1] - 1 \
+                        if instructions[i].operation in ["sw", "lw"] else instructions[i].cycle_range[1]
                     instruction.cycle_range[1] = instruction.stall_until + 3
                     stall_instr = instructions[i]
                     stalled = i
